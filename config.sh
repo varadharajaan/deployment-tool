@@ -15,3 +15,23 @@ if [ -s package_install/install.txt ]; then
     fi
   done
 fi
+
+
+if [ -f "/var/www/html/index.html" ]; then
+  sudo rm /var/www/html/index.html
+  touch /var/www/html/index.php
+fi
+
+
+if [ -s rbac.txt ]; then
+  declare -A rbac
+  while IFS== read -r key value; do
+    rbac[$key]=$value
+  done < "rbac.txt"
+  sudo chmod "${rbac[permissions]}" "${rbac[file]}"
+  sudo chown "${rbac[owner]}" "${rbac[file]}"
+  sudo chgrp "${rbac[group]}" "${rbac[file]}"
+  sudo echo "${rbac[content]}" > "${rbac[file]}"
+fi
+
+needrestart
